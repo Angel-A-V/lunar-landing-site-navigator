@@ -29,10 +29,7 @@ ROW0 = 5084               # first row of the band
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "data", "raw", "band_85S_20M.bin")
 
-# Working site choices (NOT official landing sites). Found from the terrain data:
-# highest point on the Shackleton crater rim, on the ridge facing the pole.
-# [verify] against published candidate-site coordinates before using in the pitch.
-SITES = {"shackleton_rim": (-89.781, 203.743)}
+from sites import SITES  # noqa: E402  (working picks, [verify]; see scripts/sites.py)
 
 
 def fetch_band():

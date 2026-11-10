@@ -40,11 +40,22 @@ Downloads about 150 MB of NASA LOLA terrain into `data/raw/` (not committed) and
 writes `data/skyline_shackleton_rim.csv` and a `.meta.json` next to it.
 The CSV is what the CAD script for the printed wall reads.
 
+## Get the Sun and Earth directions (NASA JPL Horizons)
+
+```
+python3 scripts/fetch_horizons.py                          # 30 days, hourly
+python3 scripts/fetch_horizons.py --days 365 --step "6 h"  # a full year
+```
+
+Needs internet once; results are cached in `data/horizons_*.csv` (with a `.meta.json`
+holding the exact queries) so the demo works offline. No numpy needed.
+Columns: `time_utc, sun_az_deg, sun_el_deg, earth_az_deg, earth_el_deg`.
+
 ## Folders
 
 | Folder | What |
 | --- | --- |
-| `scripts/` | Data scripts (skyline now; Horizons Sun/Earth fetch next) |
+| `scripts/` | Data scripts: `make_skyline.py` (terrain), `fetch_horizons.py` (Sun/Earth), `sites.py` (site list) |
 | `tests/` | Self-tests |
 | `data/` | Small committed outputs (CSV). Big raw downloads go in `data/raw/` and are ignored |
 | `NasaSpaceApps-Challenges/` | Challenge text (11 primary, 3 backup) |
@@ -52,4 +63,4 @@ The CSV is what the CAD script for the printed wall reads.
 ## Data sources
 
 NASA LRO LOLA gridded elevation (LDEM_85S_20M, PDS Geosciences Node).
-JPL Horizons for Sun/Earth directions (not added yet).
+NASA JPL Horizons (ephemeris DE441, Moon orientation including libration) for Sun/Earth directions.
