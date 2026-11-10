@@ -1,0 +1,23 @@
+# Personal tool settings (contain local paths and personal plugin choices)
+.claude/
+
+# Big downloaded terrain data. Re-created by `python3 scripts/make_skyline.py`
+data/raw/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+pylibs/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Challenge PDFs: keep only the two we use (11 = primary, 3 = backup)
+NasaSpaceApps-Challenges/*
+!NasaSpaceApps-Challenges/nasachall11.pdf
+!NasaSpaceApps-Challenges/nasachall3.pdf

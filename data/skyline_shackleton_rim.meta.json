@@ -1,0 +1,13 @@
+{
+  "site": "shackleton_rim",
+  "lat_deg": -89.781,
+  "lon_deg_east": 203.743,
+  "site_height_m_above_1737.4km_sphere": 1737.9430134536797,
+  "azimuth": "0 = north, 90 = east, step 1.0 deg",
+  "max_range_km": 35.0,
+  "skyline_min_deg": -2.920524490420629,
+  "skyline_max_deg": 1.0356680144150465,
+  "skyline_mean_deg": -1.2383679238307876,
+  "source": "NASA LRO LOLA LDEM_85S_20M (PDS Geosciences Node GDR)",
+  "status": "site choice is a working pick, [verify] before publishing"
+}
