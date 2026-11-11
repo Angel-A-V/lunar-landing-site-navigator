@@ -9,6 +9,16 @@ Source docs in this folder (read them for detail, do not duplicate them here):
 - `SpaceApps Hackathon – Hardware Inventory.md`: what we own.
 - `NasaSpaceApps-Challenges/nasachall11.pdf` (primary), `nasachall3.pdf` (backup). Challenge 11 text was read directly and matches the plan. Notes from it: no required deliverable list (everything is "you may consider"); the Moon has no atmosphere, so the horizon is local terrain plus the edge of the lunar sphere; it names libration and lunar orbital variation as accuracy factors; audiences are mission planners, educators, and the public; the Resources tab on the challenge page can still gain links before the hackathon. To extract PDF text here: `pip install --target <dir> pypdf` (poppler is not installed).
 
+## How we work: learning first, planning phase (READ THIS FIRST)
+
+Set by the team on 2026-11-10. These rules override the convenience of "just building it":
+- **Do not write code for the team right now.** The point of the hackathon is to learn, not to have an AI do the work. We are in the **planning phase**. Real development happens **on the day of the hackathon**; we are using the time before it to make sure everyone fully understands what the project is and how each part fits together.
+- **Explain, don't build.** Answer questions, explain concepts and code in plain language (define every term), draft plans, checklists and explainer pages. If asked to "show how it works", explain with small snippets or pseudocode and say what each line does, but do not add or change files in `scripts/`, `tests/`, `app/` or `firmware/` unless the team explicitly asks for that specific change.
+- **Understanding over speed.** Teammates want to understand "all the way down", including the nitty-gritty code. Prefer step-by-step reasoning, analogies, and "why this and not the alternative".
+- **Check before creating or pushing things.** Ask before adding code, running big downloads, or pushing to GitHub.
+- **History to be aware of:** before this rule was set, an AI session wrote `scripts/make_skyline.py`, `scripts/fetch_horizons.py`, `scripts/sites.py`, `tests/`, and fetched data into `data/`. The team may remove or rewrite these so the real build happens on the day. Treat them as reference material, not as finished work to build on without asking.
+- **Target hardware:** all of the code is meant to run on the **Arduino UNO Q (4 GB)**: Linux side (Python server, data, web app) plus the STM32 microcontroller side (Arduino sketch for stepper/LED). Details of the UNO Q software bridge are [verify].
+
 ## What we are building
 
 The problem: lunar south pole missions must pick a landing **site** and **date**. That decides (1) solar power, via the Sun's elevation above the local horizon, and (2) direct-to-Earth communication, via whether Earth is above the local horizon.
@@ -86,6 +96,8 @@ Read `spaceapps_context_handoff.md` for the full story. Short version:
 - **Repo:** https://github.com/Angel-A-V/lunar-landing-site-navigator (private). Work is tracked in GitHub Issues and Milestones.
 - **Teammate needs:** Gustavo needs only the skyline CSV (+ `r_wall`, `k`, pedestal height). Darren needs lamp height/distance and spin direction, not the terrain data. Neither needs the ephemeris code.
 - **Run it:** needs numpy (`sudo apt install python3-numpy`), then `python3 -m unittest discover -s tests -t . -v`. See `README.md`.
+- **Recent commits:** `e7db387` Horizons Sun/Earth fetch, cached data, tests; `efbbbb4` initial commit (plan, LOLA skyline script, tests); `c2efda3` `for_gustavo/` (one-page horizon wall note + copy of `skyline_shackleton_rim.csv`). Not pushed to GitHub yet.
+- **Gustavo handoff (2026-11-10):** Gustavo CADs the wall himself from `for_gustavo/`: horizon only (flat ground), wall top = `pedestal_h + r_wall * k * tan(skyline_deg)`, defaults 140 mm disc, r_wall 60 mm, k = 10, pedestal about 33 mm. His agent's `make_wall.py`/`cad/` files never reached this repo; his note is `handoff_gustavo_to_angel.md` (untracked). Sun elevation at the site stays within about -1.75 to +1.74 deg (for Darren's lamp); Earth mean az about 156 deg (swings 148 to 164). Proposal, to confirm with Darren: photoresistor at eye height at disc centre on a fixed overhead arm, not on the spinning disc. Spin direction still [verify].
 - **Repo hygiene:** `.claude/`, `data/raw/`, caches, and the 12 unused challenge PDFs are git-ignored on purpose.
 
 ## Open questions (from the plan)
