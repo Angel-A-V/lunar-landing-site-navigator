@@ -9,6 +9,30 @@ Tags: **EXISTS** (in the repo now), **PROPOSED** (my recommendation, team decide
 
 Two NASA datasets answer two questions. **JPL Horizons** tells us *where the Sun and Earth are in the sky* of a spot on the Moon, hour by hour. **LOLA terrain** tells us *how high the local skyline is* in every compass direction. The software compares the two: a body is "up" when its elevation is above the skyline at its azimuth. Everything the app shows (sunset time, Earth visible yes/no, sunlit percentage, compare two sites) comes from that one comparison.
 
+### Who computes what (updated 2026-11-13)
+
+| Step | Who |
+|---|---|
+| Sun and Earth direction (az, el) from the site, including libration | **NASA Horizons.** We only request it. |
+| Terrain heights around the site | **NASA LOLA.** We only download them. |
+| Skyline built from those heights | **Us.** NASA does not publish one per site. |
+| Is the body above the skyline? Time to sunset, sunlit %, compare two sites | **Us.** Horizons only knows the flat horizon. |
+| Making it understandable to a non-expert | **Us.** This is the value of the site. |
+
+So the hard orbital and frame maths is NASA's. Our own calculation is two small pieces: build the skyline, and compare elevation against it.
+
+### What "skyline" means
+
+From the reference paper (`docs/references/skyline-photogrammetry-ntrs-19950008265.pdf`): the skyline is "the highest elevation angle separating sky and terrestrial objects at each azimuth." Stand at the site, turn in a full circle, and in each compass direction note how high the terrain reaches above the flat horizon.
+
+It is **not the crater rim itself**. Our pick sits on the Shackleton rim, so the rim is where we stand and the skyline is the terrain around us. Real values for the pick (`data/skyline_shackleton_rim.csv`): highest +1.04° (azimuth 31°), lowest -2.92° (azimuth 293°), mean -1.24°, and **344 of 360 directions are below 0°**, because the ground falls away from a high perch. At the pole, Sun and Earth stay within a few degrees of the horizon, so these small angles decide visibility.
+
+### Does this already exist? (searched 2026-11-13; cannot prove nothing exists [verify])
+- The **method** is published: Mazarico et al. 2011 (*Icarus*) computed horizon elevations in many directions from polar terrain models and found a spot near the Shackleton rim sunlit about 240 days a year. https://ntrs.nasa.gov/citations/20120010094
+- NASA PGDA publishes **static** south-pole illumination and Earth-visibility maps averaged over an 18.6-year cycle. https://pgda.gsfc.nasa.gov/products/69
+- A JPL radar-DEM study put the best site's direct-to-Earth availability near 50%. https://ipnpr.jpl.nasa.gov/progress_report/42-176/176C.html
+- These are specialist papers and fixed maps. Horizons gives any date but only against a flat horizon. We found nothing that lets a non-expert pick a site and date and see Sun and Earth against the real terrain with times.
+
 ---
 
 ## 2. Pipeline at a glance
@@ -33,6 +57,8 @@ Two NASA datasets answer two questions. **JPL Horizons** tells us *where the Sun
 ```
 
 Why precompute (Wi-Fi is available, so this is not about being offline): (1) a Horizons call takes seconds and the app should answer instantly when someone drags the slider; (2) a cached table makes every number traceable and repeatable, because the `.meta.json` stores the exact Horizons query; (3) the app should not break if the Horizons service is slow or down during judging. A live "fetch any date" path can be added later on top of the cache.
+
+**Update 2026-11-13:** caching is a speed and safety choice, not the goal of the site, and users never see it. The two datasets differ: the **skyline must be built ahead of time** (about 150 MB of terrain and millions of lookups), but **Sun and Earth can be fetched live** from Horizons for any date outside the cache. Use the cache as a fallback, and see section 5d for how browsers can reach Horizons.
 
 ---
 
@@ -97,7 +123,9 @@ Run Steps 2 to 5 for (site A, time A) and (site B, time B). Return both result s
 2. **Skyline is 360 samples, 1° apart** and out to 35 km. Distant peaks beyond 35 km are ignored.
 3. **Earth margin is zero** (no safety buffer). A real radio link may need a few degrees. Make the margin a setting.
 4. **The site pick is a working choice, not an official landing site** [verify].
-5. **Not yet cross-checked** against Quickmap or Moon Trek illumination maps. Planned.
+5. **Not yet cross-checked** against Quickmap, Moon Trek or the NASA PGDA illumination and Earth-visibility maps. Planned (see section 7).
+6. **Mazarico et al. 2011 model the Sun as a finite disc**, as does the Earth-visibility approach. Our point-Sun is a known gap to close or state.
+7. **Skyline error** is limited by terrain resolution (20 m) and the 1° azimuth step. The 1995 photo-based paper reports about 4° mean error for its method; ours is geometric, not image-based, but we should still state our own error bound.
 
 ---
 
@@ -112,7 +140,7 @@ Run Steps 2 to 5 for (site A, time A) and (site B, time B). Return both result s
 | 5 | Analysis core | Python (numpy optional) | PROPOSED, not written | Steps 2 to 6 above. Pure functions: data in, numbers out. No web or hardware knowledge in it. |
 | 6 | Window statistics | Python script `compute_windows.py` | PROPOSED, not written | Precomputes per-site yearly stats (sunlit %, longest dark stretch) into JSON so the UI loads instantly. |
 | 7 | Server | Python on the UNO Q Linux side | PROPOSED | See decision A. Serves the web files and answers JSON requests. |
-| 8 | Web app | HTML + JavaScript + SVG | PROPOSED | See decision B. |
+| 8 | Web app | Vite + JavaScript + three.js (3D) + SVG | PROPOSED (Vite chosen by Angel 2026-11-13) | See "Frontend choice" below. |
 | 9 | Hardware link | Server → serial or UNO Q Bridge → Arduino sketch (STM32) | PROPOSED | Plain text lines: `SUN az el`, `EARTH az el`, `HOME`, `STATUS`. Bridge API [verify]. |
 | 10 | Firmware | Arduino C++ sketch | Not started | Stepper (28BYJ-48 + ULN2003), LED, pot, LCD. Out of scope for this doc. |
 
@@ -133,8 +161,13 @@ Run Steps 2 to 5 for (site A, time A) and (site B, time B). Return both result s
 
 **Recommendation:** Python computes. As a backup for a dead server on demo day, export a few ready-made JSON snapshots that the browser can read directly.
 
-### Frontend choice (PROPOSED)
-Plain HTML/CSS/JavaScript, drawing the sky diagram and timeline as **SVG**, with no build step and no framework. Reason: two days, one developer, and the screens are simple (see the Figma wireframe). If the team later wants a 3D Moon, add a library then. That is COULD, not MUST.
+### Frontend choice (updated 2026-11-13)
+**Vite** (a build tool and dev server) with plain JavaScript, **three.js** for the 3D animations, and SVG for the flat diagrams. Reason: the team wants 3D to make the site stand out.
+- Vite builds ordinary static files. The same output goes to Cloudflare Pages (public mode) and is served by the UNO Q (hardware mode).
+- It adds a build step: Node is needed on a development laptop, **not on the UNO Q**.
+- three.js runs on the visitor's graphics chip, so UNO Q speed only matters if the UNO Q's own monitor opens the page [verify].
+- Start with plain JavaScript; React (react-three-fiber) is optional later.
+- Order of work stays: MUST list and the data layer first, 3D surface view is COULD. Leave a clear place for the 3D scene in the page.
 
 ---
 
@@ -152,6 +185,22 @@ All answers JSON. `t` is UTC ISO time. [PROPOSED, names can change]
 | `GET /api/sources` | Source names, versions, retrieval time (from the `.meta.json` files) so the app can show attribution |
 
 Hardware: the server converts a state into `SUN <az> <el>` and `EARTH <az> <el>` lines and writes them to the serial/Bridge link only if one is present. No device, no error, the app still works.
+
+---
+
+## 5d. What the Horizons API reference says (tested 2026-11-13)
+
+Source: `docs/references/horizons-api-v1.3.pdf` (Horizons API v1.3, June 2025), plus one live test request.
+
+- **We can make the calls.** Endpoint `https://ssd.jpl.nasa.gov/api/horizons.api`, no API key. A test for the Shackleton rim pick returned HTTP 200 and JSON, with values consistent with the cache.
+- **`coord@301` is not in this PDF.** The PDF only lists `'coord'` for `CENTER`. The `@301` (observer on the Moon) comes from the longer Horizons manual but demonstrably works.
+- **Version:** the PDF says check the `signature` version in the reply. The live reply said 1.2, the PDF says 1.3 (1.3 only added a mention of `TIME_TYPE`). Our fetch script should record it in the `.meta.json`.
+- **No CORS header** was returned, so a browser page on another domain (Cloudflare Pages) probably cannot read Horizons directly. Use a go-between: the UNO Q Python server in hardware mode, or a small Cloudflare Worker (which can also cache at the edge) in public mode.
+- **Errors can arrive as HTTP 200.** Input errors come in the payload; JSON replies carry an `error` field. Our script checks for the data block but not that field.
+- **Overload:** 500 = database unavailable, 503 = overloaded or in maintenance. Add a retry with a pause (the current script has none).
+- **Limits:** a list of specific times (`TLIST`) is capped at 10,000 and may hit URL-length limits. The PDF states no rate limit or terms [verify]. Request a whole date range in one call; do not make one call per slider move.
+- **Privacy:** `EMAIL_ADDR` is optional. Leave it blank or use a team address, never a personal one.
+- **Rise/transit/set from NASA:** `STEP_SIZE='5m RAD'` returns rise/transit/set rows for the **flat horizon** and worked at the rim pick. The only filter, `ELEV_CUT`, is one fixed angle, so it cannot use our skyline. Use it to cross-check our flat-horizon sunset finder. The marker letters in its output are not explained in the PDF [verify].
 
 ---
 
@@ -218,11 +267,19 @@ tests/          unittest checks                      (EXISTS, grows with analysi
 
 ## 7. How we know the numbers are right (checks to write on the day)
 
-1. **Made-up inputs with known answers**: flat skyline at 0°, a Sun that climbs from -1° to +1°. Sunset must land at the exact crossing time. (Same style as the existing skyline tests.)
-2. **Wrap-around**: azimuth 359.9 and 0.1 give nearly the same skyline value.
-3. **Real-data sanity** (these already hold for the current cache): Sun elevation stays within about -1.75° to +1.74° at the pick; Earth az stays about 148° to 164°.
-4. **Reproducibility**: every cached CSV has a meta file with the exact queries, so anyone can re-run and diff.
-5. **External cross-check** (not done): compare sunlit/dark periods against NASA Quickmap illumination for the same location and dates.
+**Goal of the first version:** a bare-minimum, unstyled page that computes the real data and lets anyone verify it. Pick the site and a date/time, then show a table: Sun and Earth az/el (straight from Horizons), the skyline at that azimuth, the margin, visible yes/no, time to sunset and Earthset.
+
+Checks, in order of value:
+1. **Show NASA's raw numbers beside ours** on the page, so nobody has to trust that we did not alter them.
+2. **Made-up inputs with known answers**: flat skyline at 0°, a Sun that climbs from -1° to +1°. Sunset must land at the exact crossing time. (Same style as the existing skyline tests.)
+3. **Wrap-around**: azimuth 359.9 and 0.1 give nearly the same skyline value.
+4. **Flat-horizon cross-check against NASA**: compare our sunset/sunrise on a flat skyline with Horizons' own rise/set mode (`STEP_SIZE='5m RAD'`, section 5d).
+5. **Compare yearly percentages with published results**: our Sun about 80% and Earth about 51% against the NASA PGDA maps and the published figures in section 1 (Mazarico 2011 about 240 sunlit days a year near Shackleton; JPL about 50% direct-to-Earth). Expect the same range, not an exact match: cycle length, Sun disc and site pixel differ.
+6. **Spot-check a few skyline azimuths by hand** against LOLA heights or Moon Trek's profile tool [verify].
+7. **Real-data sanity** (already holds for the current cache): Sun elevation stays within about -1.75° to +1.74° at the pick; Earth az stays about 148° to 164°.
+8. **Reproducibility**: every cached CSV has a meta file with the exact queries, so anyone can re-run and diff.
+
+**Extra statistics from the skyline paper** (cheap, from the 360-row file): mean skyline, 90th-percentile skyline, and the percentage of sky visible above a given elevation. For the pick: mean -1.24°, 90th percentile about -0.4°.
 
 First rough results over a year at the pick (Sun as a point, Earth with no margin): Sun above real skyline about 80% (54% on a flat horizon), Earth about 51%, both about 41%. Treat as provisional until step 5 above.
 
@@ -236,6 +293,8 @@ First rough results over a year at the pick (Sun as a point, Earth with no margi
 4. Date range the picker supports. The cache covers 365 days from 2026-11-10. Beyond that we either fetch more or limit the picker.
 5. Earth visibility margin: 0° or a few degrees? Treat the Sun as a point or as a disc?
 6. UNO Q Bridge details: how does Python on Linux reach the STM32 sketch? [verify]
+7. Horizons access for the public site: Cloudflare Worker go-between, or hardware mode only? (section 5d)
+8. Does the UNO Q's own monitor run the 3D page? If yes, test three.js performance on it [verify].
 
 ## 9. Glossary (short)
 - **Azimuth**: compass bearing, 0 = north, 90 = east.
