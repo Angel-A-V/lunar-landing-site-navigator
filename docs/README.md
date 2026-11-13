@@ -3,9 +3,11 @@
 | File | What it is | Read it when |
 | --- | --- | --- |
 | `software-architecture.md` | How the analysis works, the software stack, server interface, hosting, and the two-modes decision | You want to understand the calculations or the code layout |
+| `how-the-calculations-work.md` | Learning guide: every calculation explained in plain language with real numbers, sensitivity, dashboard quantities, a review checklist for AI-generated code, and by-hand exercises | You want to understand the maths, or design the dashboard |
 | `project-plan.md` | Full project plan, interface contract, assignments, risks (parts still describe the older hardware; the handoff overrides) | You need the big picture or the command format |
 | `context-handoff.md` | Full story of the project, the two-day hardware design, decisions so far | You are new, or the plan and the handoff disagree |
 | `hardware-inventory.md` | What parts we own | Planning wiring or parts |
+| `handoffs/angel-to-hardware.md` | DRAFT: answers to Gustavo's requests, spin direction from data, open decisions, and the hardware list per person | You are Gustavo or Darren, or you are about to send them an update |
 | `handoffs/gustavo-to-angel.md` | Gustavo's note on the terrain wall | Working on the wall or the photoresistor placement |
 | `explainer/website-guide.md` | Guide for the Moon Sky Explainer teaching page | You want the concepts explained for the team |
 | `explainer/moon-sky-explainer.html` | The interactive teaching page (simplified model, not real ephemeris data). Open it in a browser. | You want to see frames, globe and sky interactively |

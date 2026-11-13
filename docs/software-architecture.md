@@ -263,6 +263,47 @@ data/           cached CSV, JSON, meta               (EXISTS)
 tests/          unittest checks                      (EXISTS, grows with analysis/)
 ```
 
+### 6b. Frontend code architecture (PROPOSED 2026-11-13, nothing created)
+
+Who writes this: the team, with their own prompts and agents. This section is the **map** so everyone builds the same shape, and so Angel can design the dashboard knowing where each piece lives. To understand the numbers behind it, read `how-the-calculations-work.md`.
+
+```
+app/
+  index.html
+  vite.config.js
+  package.json
+  public/data/        exported JSON for public mode (state tables, skylines, sources)
+  src/
+    main.js           start-up: reads the mode, builds the data layer, mounts the first view
+    config.js         MODE = "public" or "hardware" (set with a Vite env variable at build time)
+    data/             THE DATA LAYER (the only place that fetches anything)
+      index.js        picks one implementation based on MODE
+      api.js          asks the Python server (hardware mode)
+      static.js       reads the exported JSON (public mode)
+    state/            one small store: selected site(s), picked time, compare slots, explain mode
+    views/            Explore, Compare, Sources (one per wireframe screen)
+    components/       SitePicker, TimePicker, SkyDiagram (SVG), NumbersPanel, Timeline,
+                      VerdictPills, HardwarePanel (hidden in public mode)
+    three/            3D scenes (see below), kept apart from the flat components
+    styles/
+```
+
+**Rules that keep it simple**
+1. **Only `data/` talks to the outside.** Views and components ask the store or the data layer, never `fetch` directly. This is what lets one codebase run in both modes.
+2. **Components receive plain numbers** (azimuths, elevations, margin, event times) and draw them. No NASA maths inside a component.
+3. **The calculation lives once**, in the Python analysis core (or, for public mode, in precomputed JSON). The page displays results; it does not redo the physics.
+4. **Hardware mode only adds things**: the HardwarePanel and the server connection. Remove them and the public site must still be complete.
+
+**Build and run** (a build step now exists): on a laptop, install Node, then Vite builds a `dist/` folder of plain files. Public mode: upload `dist/` to Cloudflare Pages. Hardware mode: copy `dist/` onto the UNO Q and let the Python server serve it. Node is not needed on the UNO Q.
+
+**The 3D parts (three.js), all COULD, after the MUST list works**
+- **Moon globe**: a sphere with the site marked; click-to-pick-a-site is the later feature.
+- **View from the site**: a ring of vertical walls, one per azimuth, whose heights come from the **same 360-row skyline file** (height ∝ tan of the skyline angle). This is the same idea as Gustavo's printed terrain wall, so the screen and the physical model show the same data.
+- **Sun and Earth placement** in that view: convert (azimuth, elevation) back into a direction. With azimuth from north and elevation from level: east = sin(az)·cos(el), north = cos(az)·cos(el), up = sin(el). This is the reverse of the conversion Horizons already did, and ties directly to the frame chain.
+- The 3D scene reads the **same store** as the flat diagram, so moving the time slider moves both.
+
+**What to decide before building** (open): plain JavaScript or React for the views (default plain), and which visual elements matter most for the 3D budget.
+
 ---
 
 ## 7. How we know the numbers are right (checks to write on the day)
