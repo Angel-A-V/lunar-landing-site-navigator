@@ -6,7 +6,7 @@ A small tabletop model shows one site with a lamp as the Sun and a printed copy
 of the real horizon.
 
 Team: Angel (code, electronics), Gustavo (disc and terrain wall), Darren (stand and lamp).
-Start with `CLAUDE.md` (short project brief) and `spaceapps_context_handoff.md` (full context).
+Start with `CLAUDE.md` (short project brief) and `docs/context-handoff.md` (full context).
 
 ## Setup
 
@@ -48,7 +48,7 @@ python3 scripts/fetch_horizons.py --days 365 --step "6 h"  # a full year
 ```
 
 Needs internet once; results are cached in `data/horizons_*.csv` (with a `.meta.json`
-holding the exact queries) so the demo works offline. No numpy needed.
+holding the exact queries) so the app answers instantly and every number can be re-checked. No numpy needed.
 Columns: `time_utc, sun_az_deg, sun_el_deg, earth_az_deg, earth_el_deg`.
 
 ## Folders
@@ -58,7 +58,12 @@ Columns: `time_utc, sun_az_deg, sun_el_deg, earth_az_deg, earth_el_deg`.
 | `scripts/` | Data scripts: `make_skyline.py` (terrain), `fetch_horizons.py` (Sun/Earth), `sites.py` (site list) |
 | `tests/` | Self-tests |
 | `data/` | Small committed outputs (CSV). Big raw downloads go in `data/raw/` and are ignored |
+| `docs/` | Plan, hardware inventory, software architecture, handoffs, explainer (index: `docs/README.md`) |
+| `cad/` | Gustavo's terrain wall files (STL, SolidWorks curves) |
+| `for_gustavo/` | One-page wall note and the skyline CSV for Gustavo |
 | `NasaSpaceApps-Challenges/` | Challenge text (11 primary, 3 backup) |
+
+Planned, not created yet (real development is on the hackathon day): `analysis/` (calculation core), `server/`, `app/` (web app), `firmware/` (Arduino sketch).
 
 ## Data sources
 

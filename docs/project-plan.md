@@ -4,7 +4,7 @@ Nov 6, 2026 · Team: Angel, Gustavo, Darren
 
 This document explains what we are building and why, then gives each person their own section. Read sections 1 to 4 together as a team. Then each person reads their own section in section 5.
 
-Companion file: `SpaceApps Hackathon – Hardware Inventory.md` (what we own).
+Companion file: `hardware-inventory.md` (what we own).
 Challenge texts: `NasaSpaceApps-Challenges/nasachall11.pdf` (primary) and `nasachall3.pdf` (backup).
 
 Honesty note: facts taken from the challenge PDFs are marked as such. Everything else (part dimensions, pin numbers, links outside the PDFs, orbital numbers) is from general knowledge and must be verified before we depend on it. Those items are tagged **[verify]**.

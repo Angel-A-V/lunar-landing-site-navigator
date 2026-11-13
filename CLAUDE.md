@@ -5,8 +5,9 @@ The MEs do not write code. All main code (ephemeris, web app, main firmware) liv
 Backup: Challenge 3 (Junior Astronaut Mission Trainer). Go/no-go at the end of Phase 1; see the plan.
 
 Source docs in this folder (read them for detail, do not duplicate them here):
-- `Project Plan – Lunar Landing Site Navigator.md`: full plan, interface contract, assignments, risks.
-- `SpaceApps Hackathon – Hardware Inventory.md`: what we own.
+- `docs/project-plan.md`: full plan, interface contract, assignments, risks.
+- `docs/hardware-inventory.md`: what we own.
+- `docs/software-architecture.md`: how the analysis works (calculation steps with a real worked example), the proposed software stack, server interface, hosting options, and the decision to build ONE codebase that runs in two modes (public Cloudflare Pages, no hardware; and local on the UNO Q with the hardware). Index of all docs: `docs/README.md`.
 - `NasaSpaceApps-Challenges/nasachall11.pdf` (primary), `nasachall3.pdf` (backup). Challenge 11 text was read directly and matches the plan. Notes from it: no required deliverable list (everything is "you may consider"); the Moon has no atmosphere, so the horizon is local terrain plus the edge of the lunar sphere; it names libration and lunar orbital variation as accuracy factors; audiences are mission planners, educators, and the public; the Resources tab on the challenge page can still gain links before the hackathon. To extract PDF text here: `pip install --target <dir> pypdf` (poppler is not installed).
 
 ## How we work: learning first, planning phase (READ THIS FIRST)
@@ -85,7 +86,7 @@ Interface contract fields still blank in the plan: model footprint, stepper/serv
 
 ## Current state (updated 2026-11-10) and decisions since the plan
 
-Read `spaceapps_context_handoff.md` for the full story. Short version:
+Read `docs/context-handoff.md` for the full story. Short version:
 - **No machine learning.** Everything is physics and geometry from NASA data, so numbers can be traced and checked. Do not add ML.
 - **Time is about 2 days.** The hardware was cut to a two-day design: the Moon surface (a ~140 mm disc with the printed terrain wall) rotates on the stepper under a fixed lamp. Nothing electrical rides on the disc. One site only for the model. The older plan text still describes the moving Sun ring and servo Earth arm; the handoff file overrides it.
 - **Model site: Shackleton crater rim, working pick at -89.781, 203.743 E.** Found from LOLA data as the highest rim point on the ridge facing the pole. It is NOT an official landing site. [verify] against a published candidate list before the pitch.
@@ -96,8 +97,10 @@ Read `spaceapps_context_handoff.md` for the full story. Short version:
 - **Repo:** https://github.com/Angel-A-V/lunar-landing-site-navigator (private). Work is tracked in GitHub Issues and Milestones.
 - **Teammate needs:** Gustavo needs only the skyline CSV (+ `r_wall`, `k`, pedestal height). Darren needs lamp height/distance and spin direction, not the terrain data. Neither needs the ephemeris code.
 - **Run it:** needs numpy (`sudo apt install python3-numpy`), then `python3 -m unittest discover -s tests -t . -v`. See `README.md`.
-- **Recent commits:** `e7db387` Horizons Sun/Earth fetch, cached data, tests; `efbbbb4` initial commit (plan, LOLA skyline script, tests); `c2efda3` `for_gustavo/` (one-page horizon wall note + copy of `skyline_shackleton_rim.csv`). Not pushed to GitHub yet.
-- **Gustavo handoff (2026-11-10):** Gustavo CADs the wall himself from `for_gustavo/`: horizon only (flat ground), wall top = `pedestal_h + r_wall * k * tan(skyline_deg)`, defaults 140 mm disc, r_wall 60 mm, k = 10, pedestal about 33 mm. His agent's `make_wall.py`/`cad/` files never reached this repo; his note is `handoff_gustavo_to_angel.md` (untracked). Sun elevation at the site stays within about -1.75 to +1.74 deg (for Darren's lamp); Earth mean az about 156 deg (swings 148 to 164). Proposal, to confirm with Darren: photoresistor at eye height at disc centre on a fixed overhead arm, not on the spinning disc. Spin direction still [verify].
+- **Recent commits:** `e7db387` Horizons Sun/Earth fetch, cached data, tests; `efbbbb4` initial commit (plan, LOLA skyline script, tests); `c2efda3` `for_gustavo/` (one-page horizon wall note + copy of `skyline_shackleton_rim.csv`); `a683393` CLAUDE.md update + `docs/handoffs/gustavo-to-angel.md`; `506336e` "Horizon cad file" (Gustavo's `cad/` folder: wall-only STL, SolidWorks wall-top curve .txt files, preview PNG; pulled 2026-11-11, not yet reviewed). All pushed to GitHub.
+- **Gustavo handoff (2026-11-10):** Gustavo CADs the wall himself from `for_gustavo/`: horizon only (flat ground), wall top = `pedestal_h + r_wall * k * tan(skyline_deg)`, defaults 140 mm disc, r_wall 60 mm, k = 10, pedestal about 33 mm. His agent's `make_wall.py` never reached this repo (only the `cad/` outputs did, in `506336e`); his note is `docs/handoffs/gustavo-to-angel.md`. Sun elevation at the site stays within about -1.75 to +1.74 deg (for Darren's lamp); Earth mean az about 156 deg (swings 148 to 164). Proposal, to confirm with Darren: photoresistor at eye height at disc centre on a fixed overhead arm, not on the spinning disc. Spin direction still [verify].
+- **Moon Trek check (2026-11-11):** NOT done, and optional. Moon Trek's "Site07: Peak Near Shackleton" DEM (Barker et al. 2020, doi:10.1016/j.pss.2020.105119, bbox about 25 to 47 km from the pole) is a different place from our rim pick (6.6 km from the pole); it does not confirm or contradict it. If checking later: Moon Trek labels longitude -180 to 180, so 203.743 E = -156.257; find the line between 155W and 160W about 6.6 km from the pole and read lat -89.781 off the bottom-right readout. Pitch wording: demo site found from NASA LOLA data, not an official landing site.
+- **Website planning (next, not started):** Angel wants to plan the website architecture, then a low-fidelity and a high-fidelity Figma wireframe, before any code (planning phase rules still apply). Suggested order: (1) one-page architecture/site-map diagram covering the MUST list (site picker, date picker, Sun/Earth vs horizon diagram, numbers, compare two sites, data sources); (2) low-fi Figma (grey boxes, layout and flow); (3) hi-fi Figma (colour, type, real sample numbers from the Horizons cache). Tools available: Figma MCP (needs the Figma account connected and a team/project to put the file in), plus planning skills (`ecc:architect`, `ecc:frontend-design-direction`, `dataviz`, `design:design-critique`). Ask Angel before creating any Figma file.
 - **Repo hygiene:** `.claude/`, `data/raw/`, caches, and the 12 unused challenge PDFs are git-ignored on purpose.
 
 ## Open questions (from the plan)
