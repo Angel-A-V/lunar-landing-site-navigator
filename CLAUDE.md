@@ -11,14 +11,12 @@ Source docs in this folder (read them for detail, do not duplicate them here):
 - `docs/how-the-calculations-work.md`: plain-language learning guide to every calculation (skyline, visibility margin, sunset/Earthset search, sensitivity) with real numbers and by-hand exercises. Angel wants to understand these under the hood so he can design the dashboard and review what teammates' agents produce. When asked about the calculations, teach from this doc; do not just hand over code.
 - `NasaSpaceApps-Challenges/nasachall11.pdf` (primary), `nasachall3.pdf` (backup). Challenge 11 text was read directly and matches the plan. Notes from it: no required deliverable list (everything is "you may consider"); the Moon has no atmosphere, so the horizon is local terrain plus the edge of the lunar sphere; it names libration and lunar orbital variation as accuracy factors; audiences are mission planners, educators, and the public; the Resources tab on the challenge page can still gain links before the hackathon. To extract PDF text here: `pip install --target <dir> pypdf` (poppler is not installed).
 
-## How we work: learning first, planning phase (READ THIS FIRST)
+## How we work (collaborators: you may build and push)
 
-Set by the team on 2026-11-10. These rules override the convenience of "just building it":
-- **Do not write code for the team right now.** The point of the hackathon is to learn, not to have an AI do the work. We are in the **planning phase**. Real development happens **on the day of the hackathon**; we are using the time before it to make sure everyone fully understands what the project is and how each part fits together.
-- **Explain, don't build.** Answer questions, explain concepts and code in plain language (define every term), draft plans, checklists and explainer pages. If asked to "show how it works", explain with small snippets or pseudocode and say what each line does, but do not add or change files in `scripts/`, `tests/`, `app/` or `firmware/` unless the team explicitly asks for that specific change.
-- **Understanding over speed.** Teammates want to understand "all the way down", including the nitty-gritty code. Prefer step-by-step reasoning, analogies, and "why this and not the alternative".
-- **Check before creating or pushing things.** Ask before adding code, running big downloads, or pushing to GitHub.
-- **History to be aware of:** before this rule was set, an AI session wrote `scripts/make_skyline.py`, `scripts/fetch_horizons.py`, `scripts/sites.py`, `tests/`, and fetched data into `data/`. The team may remove or rewrite these so the real build happens on the day. Treat them as reference material, not as finished work to build on without asking.
+Updated 2026-11-13. Collaborators (Gustavo, Darren) may write code and files for their own parts and push to GitHub. The earlier "planning phase" restrictions no longer apply to them. Angel keeps his own stricter learning-first rules locally.
+- **Ownership still applies:** all main code (ephemeris, web app, main firmware) lives with Angel to avoid merge conflicts. Collaborators work in their own folders (`cad/`, `for_gustavo/`, docs, handoffs) and send anything touching `scripts/`, `app/`, `firmware/` or `tests/` through a branch and pull request instead of pushing to `main`.
+- **Pull before you push** (`git pull --rebase`) so pushes are not rejected.
+- **History to be aware of:** `scripts/make_skyline.py`, `scripts/fetch_horizons.py`, `scripts/sites.py`, `tests/`, and `data/` were written by an earlier AI session. Treat them as reference material.
 - **Target hardware:** all of the code is meant to run on the **Arduino UNO Q (4 GB)**: Linux side (Python server, data, web app) plus the STM32 microcontroller side (Arduino sketch for stepper/LED). Details of the UNO Q software bridge are [verify].
 
 ## What we are building

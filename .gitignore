@@ -21,3 +21,6 @@ Thumbs.db
 NasaSpaceApps-Challenges/*
 !NasaSpaceApps-Challenges/nasachall11.pdf
 !NasaSpaceApps-Challenges/nasachall3.pdf
+
+# Angel-only personal instructions
+CLAUDE.local.md
