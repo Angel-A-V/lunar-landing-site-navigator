@@ -45,7 +45,8 @@ Sources: `docs/handoffs/gustavo-to-angel.md`, `cad/design_notes.md`, `docs/hardw
 | Drive | 28BYJ-48 → 15-tooth pinion → 90-tooth ring gear (6:1) | fixed |
 | Degrees of disc per motor step | about 0.029° (about 12,288 steps per disc turn) | **[verify]** assumes 2048 steps per motor turn; Angel will bench-measure |
 | Lamp distance from rotation axis, r_lamp | 120 to 150 mm | **[decide]** |
-| Home sensor type, and its angle to the lamp | Hall (0°) or light gate (180°) | **[decide]** |
+| Home sensor type | Hall sensor + magnet (bought) | decided; exact part (A3144 chip or KY-003 module) and magnet size **[verify]** |
+| Angle from home sensor to lamp | 0° (lamp at the same angle as the Hall sensor) | decided, per Gustavo's plan |
 | Lamp height | `33 + r_lamp × 10 × tan(sun_elevation)` | see Gustavo's table |
 
 ---
@@ -54,10 +55,10 @@ Sources: `docs/handoffs/gustavo-to-angel.md`, `cad/design_notes.md`, `docs/hardw
 
 | # | Decision | Owner | Blocks |
 |---|---|---|---|
-| 1 | Final r_lamp (120 to 150 mm) | Gustavo + Darren | Lamp tower, lamp-height table, firmware |
-| 2 | Home sensor: Hall + magnet, light gate, or slotted module | Gustavo + Darren, Angel buys | Parts order, disc magnet pocket or flag, firmware homing |
-| 3 | Lamp angle relative to the home sensor (0° or 180°) | Gustavo + Darren | Firmware mapping of Sun azimuth to disc angle |
-| 4 | Photoresistor on a fixed arm at eye height on the centre post (stretch goal) | Darren confirms | Whether an arm is designed at all |
+| 1 | Final r_lamp (120 to 150 mm): the horizontal distance from the centre post to the lamp | Gustavo + Darren | Lamp tower and lamp-height table. The firmware does not depend on it. |
+| 2 | ~~Home sensor~~ **DECIDED: Hall sensor + magnet** (Angel bought them). Still to confirm: A3144 chip or KY-003 module, and the magnet's exact size and thickness | Angel reports the part and magnet size to Gustavo | Disc magnet pocket, sensor mount. Check the magnet pole faces the sensor correctly **[verify]**. |
+| 3 | ~~Lamp angle relative to the home sensor~~ **DECIDED: 0°** (Hall sensor and lamp at the same angle) | done | Firmware rule: home on the Hall click, call it azimuth 0, then rotate the disc by the Sun's azimuth |
+| 4 | Photoresistor on a fixed arm at eye height on the centre post. Gustavo is designing around it, so it is **in the build**, not a stretch goal | Darren confirms the arm and mounting **[confirm]** | Arm design, 2 wires out of the box |
 | 5 | Disc support: hold-down clips (in `assembly_wip.png`) vs lazy susan bearing vs printed skid pads | Darren | Stand design |
 | 6 | Electronics base: foam board / box vs printed | Darren | Box design |
 | 7 | Lamp type: small bare LED aimed at the centre post, and a 0 to 80 mm height slot | Angel confirms | Lamp tower, LED wiring |
@@ -94,7 +95,7 @@ Counts and sizes come from `docs/hardware-inventory.md` unless marked. Anything 
 | Bambu Lab A1 printer + filament | Printer yes; filament type, colours and amount **TBD** | Disc and wall: about 83 cm³, 2 to 4 h, flat side down, no supports, 0.28 mm draft layers. Also ring gear, pinion, shaft coupon, Earth marker. Build volume about 256 mm, **[verify]**. |
 | 28BYJ-48 stepper (physical) | Yes, 1 in the ELEGOO kit | Needed in his hands to measure the D-shaft and fit-test the socket. Nominal 5 mm diameter, 3 mm across flats. **[verify with calipers]** |
 | Calipers | **Not in the inventory** | Needed to measure the shaft and the printed fits. **BUY or borrow**, if he does not have his own. |
-| Magnet, about 6 mm, for the north notch (Hall option) | **BUY** | Only if the Hall sensor is chosen. Glued in a pocket under the disc. |
+| Magnet for the north notch | **Bought (Angel)** | Glued in a pocket under the disc. Exact size and thickness **[Angel to measure and send]**; the earlier 6 mm figure was only a planning number. |
 | Flag (thin tab) for the light-gate option | Printed | Only if the light gate is chosen. |
 | CAD (SolidWorks) | His own | Wall-top curves in `cad/horizon_wall/`. |
 
@@ -105,8 +106,8 @@ Counts and sizes come from `docs/hardware-inventory.md` unless marked. Anything 
 | Bambu Lab A1 printer + filament | Printer yes; filament **TBD** | Stepper mount, lamp tower, home sensor mount, disc hold-down clips or skid pads. Rough times: mount 45 to 90 min, tower about 1 h. |
 | 28BYJ-48 stepper + ULN2003 driver board (physical) | Yes, 1 each in the ELEGOO kit | Needed in his hands to model the mount and the gear centre distance. Take the centre distance from Gustavo's CAD. |
 | Lamp LED + resistor | Yes: 25 assorted LEDs, 120 resistors in the kit | Small bare LED aimed at the centre post. Sharp shadows. Angel wires it. |
-| Home sensor | **Depends on decision 2** | **Hall:** A3144 or KY-003 module, **BUY**. **Light gate from kit parts:** LED + photoresistor (the kit has 2 photoresistors and 25 LEDs). **Slotted optical module (KY-010 style):** **BUY**. |
-| Photoresistor (stretch) | Yes, 2 in the kit | Eye height on the centre post, fixed arm. |
+| Home sensor | **Bought (Angel): Hall sensor + magnet** | A3144 chip or KY-003 module **[Angel to confirm which]**. Mounted on the fixed base, 2 to 5 mm below the magnet path, at the same angle as the lamp (0°). |
+| Photoresistor | Yes, 2 in the kit | Eye height on the centre post, fixed arm, not on the spinning disc **[Darren confirms]**. |
 | Disc support | **Depends on decision 5** | Hold-down clips (printed), 3 printed skid pads (printed), or a lazy susan bearing, about $5 (**BUY**, optional). |
 | Electronics base | Foam board or box | Not printed. Needs to fit the items in the next table. |
 
@@ -128,11 +129,30 @@ Counts and sizes come from `docs/hardware-inventory.md` unless marked. Anything 
 UNO Q, ELEGOO UNO R3, "Tiny" board, breadboard, perfboards, jumper and Dupont wires, supply module, 9V battery, soldering kit, 2 multimeters, USB cable. Open items from the inventory: a USB camera, a monitor for the UNO Q, and a USB-C power supply.
 
 ### Not in the inventory and needs a decision or purchase
-1. **Home sensor** parts (Hall + magnet, or slotted module), unless the light gate from kit parts is chosen.
+1. ~~Home sensor parts~~ Bought: Hall sensor + magnet.
 2. **Calipers**, if neither of you has them.
 3. **Filament**: type, colours, amount.
 4. **Lazy susan bearing**, optional.
 5. **USB-C power supply** and **monitor** for the UNO Q.
+
+---
+
+## 6b. How the code drives the model (one board, no board per person)
+
+There is **one** controller in the final model: the Arduino UNO Q. The mechanical parts do not need their own boards.
+
+```
+Browser (laptop) --Wi-Fi--> UNO Q Linux side (Python: Horizons data -> Sun az/el)
+                                   | internal bridge [verify]
+                            UNO Q MCU side (STM32): steps the motor, reads the Hall sensor and photoresistor
+```
+
+1. The software works out the Sun's azimuth and elevation for the chosen site and date.
+2. It sends `SUN <az> <el>` to the microcontroller.
+3. The firmware homes the disc (turns until the Hall sensor clicks), calls that position azimuth 0, then rotates the disc by the Sun's azimuth, in the direction from section 2. The lamp is fixed at 0° from the Hall sensor, so no extra offset is needed.
+4. The photoresistor on the centre post reads how bright the lamp looks, so the model can show whether the terrain wall is shading the "lander".
+
+The spare ELEGOO UNO R3 is only for bench tests. The UNO Q's internal bridge API is **[verify]**.
 
 ---
 
