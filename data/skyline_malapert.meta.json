@@ -1,0 +1,18 @@
+{
+  "site": "malapert",
+  "lat_deg": -84.798043,
+  "lon_deg_east": 12.305737,
+  "site_height_m_above_1737.4km_sphere": -1671.8446538673006,
+  "azimuth": "0 = north, 90 = east, step 1.0 deg",
+  "max_range_km": 145.1507901082209,
+  "near_map": "80S_40M",
+  "near_range_km": 35.0,
+  "far_map": "80S_40M",
+  "far_range_km": 145.1507901082209,
+  "far_range_limited_by_map_edge": true,
+  "skyline_min_deg": 0.555307654730785,
+  "skyline_max_deg": 20.16192176600698,
+  "skyline_mean_deg": 8.156038630133748,
+  "terrain_map": "80S_40M",
+  "source": "NASA LRO LOLA LDEM_80S_40M (PDS Geosciences Node GDR)"
+}

@@ -1,7 +1,7 @@
 # Personal tool settings (contain local paths and personal plugin choices)
 .claude/
 
-# Big downloaded terrain data. Re-created by `python3 scripts/make_skyline.py`
+# Big downloaded terrain data. Re-created by `python3 app/python/scripts/make_skyline.py`
 data/raw/
 
 # Python

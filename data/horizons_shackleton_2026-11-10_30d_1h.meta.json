@@ -1,0 +1,17 @@
+{
+  "site": "shackleton",
+  "lat_deg": -89.625776,
+  "lon_deg_east": 132.321845,
+  "site_height_m": -2638.9,
+  "start_utc": "2026-11-10",
+  "stop_utc": "2026-12-10",
+  "step": "1 h",
+  "rows": 721,
+  "source": "NASA JPL Horizons API (ssd.jpl.nasa.gov), ephemeris DE441, Moon orientation MEAN_ME high precision (includes libration)",
+  "azimuth": "0 = north, 90 = east",
+  "retrieved_utc": "2026-11-14T10:58:08+00:00",
+  "queries": {
+    "sun": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27132.321845%2C-89.625776%2C-2.6389%27&START_TIME=%272026-11-10%27&STOP_TIME=%272026-12-10%27&STEP_SIZE=%271+h%27&QUANTITIES=%274%27&ANG_FORMAT=%27DEG%27&APPARENT=%27AIRLESS%27&CSV_FORMAT=%27YES%27",
+    "earth": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27132.321845%2C-89.625776%2C-2.6389%27&START_TIME=%272026-11-10%27&STOP_TIME=%272026-12-10%27&STEP_SIZE=%271+h%27&QUANTITIES=%274%27&ANG_FORMAT=%27DEG%27&APPARENT=%27AIRLESS%27&CSV_FORMAT=%27YES%27"
+  }
+}

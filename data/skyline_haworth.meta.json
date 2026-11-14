@@ -1,0 +1,18 @@
+{
+  "site": "haworth",
+  "lat_deg": -87.202858,
+  "lon_deg_east": 352.506344,
+  "site_height_m_above_1737.4km_sphere": -3140.7302805486834,
+  "azimuth": "0 = north, 90 = east, step 1.0 deg",
+  "max_range_km": 218.1644330320461,
+  "near_map": "80S_40M",
+  "near_range_km": 35.0,
+  "far_map": "80S_40M",
+  "far_range_km": 218.1644330320461,
+  "far_range_limited_by_map_edge": false,
+  "skyline_min_deg": 1.8047511545908719,
+  "skyline_max_deg": 13.913888347516977,
+  "skyline_mean_deg": 8.25925825700981,
+  "terrain_map": "80S_40M",
+  "source": "NASA LRO LOLA LDEM_80S_40M (PDS Geosciences Node GDR)"
+}

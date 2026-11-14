@@ -1,0 +1,63 @@
+{
+  "source": "NASA Moon Trek search service (IAU nomenclature), https://trek.nasa.gov/moon/",
+  "note": "Each coordinate is the centre of the named feature, not a chosen landing spot.",
+  "retrieved_utc": "2026-11-14",
+  "sites": [
+    {
+      "id": "shackleton",
+      "name": "Shackleton",
+      "lat_deg": -89.625776,
+      "lon_deg_east": 132.321845,
+      "pole_distance_km": 11.3,
+      "query": "https://trek.nasa.gov/moon/TrekServices/ws/index/eq/searchItems?start=0&rows=25&key=Shackleton&facetKeys=itemType&facetValues=nomenclature"
+    },
+    {
+      "id": "de_gerlache",
+      "name": "de Gerlache",
+      "lat_deg": -88.448714,
+      "lon_deg_east": 269.552485,
+      "pole_distance_km": 47.0,
+      "query": "https://trek.nasa.gov/moon/TrekServices/ws/index/eq/searchItems?start=0&rows=25&key=de+Gerlache&facetKeys=itemType&facetValues=nomenclature"
+    },
+    {
+      "id": "haworth",
+      "name": "Haworth",
+      "lat_deg": -87.202858,
+      "lon_deg_east": 352.506344,
+      "pole_distance_km": 84.8,
+      "query": "https://trek.nasa.gov/moon/TrekServices/ws/index/eq/searchItems?start=0&rows=25&key=Haworth&facetKeys=itemType&facetValues=nomenclature"
+    },
+    {
+      "id": "nobile",
+      "name": "Nobile",
+      "lat_deg": -85.239498,
+      "lon_deg_east": 53.647625,
+      "pole_distance_km": 144.4,
+      "query": "https://trek.nasa.gov/moon/TrekServices/ws/index/eq/searchItems?start=0&rows=25&key=Nobile&facetKeys=itemType&facetValues=nomenclature"
+    },
+    {
+      "id": "mons_mouton",
+      "name": "Mons Mouton",
+      "lat_deg": -84.81,
+      "lon_deg_east": 38.15,
+      "pole_distance_km": 157.5,
+      "query": "https://trek.nasa.gov/moon/TrekServices/ws/index/eq/searchItems?start=0&rows=25&key=Mons+Mouton&facetKeys=itemType&facetValues=nomenclature"
+    },
+    {
+      "id": "malapert",
+      "name": "Malapert",
+      "lat_deg": -84.798043,
+      "lon_deg_east": 12.305737,
+      "pole_distance_km": 157.8,
+      "query": "https://trek.nasa.gov/moon/TrekServices/ws/index/eq/searchItems?start=0&rows=25&key=Malapert&facetKeys=itemType&facetValues=nomenclature"
+    },
+    {
+      "id": "cabeus",
+      "name": "Cabeus",
+      "lat_deg": -85.277073,
+      "lon_deg_east": 318.1945,
+      "pole_distance_km": 143.3,
+      "query": "https://trek.nasa.gov/moon/TrekServices/ws/index/eq/searchItems?start=0&rows=25&key=Cabeus&facetKeys=itemType&facetValues=nomenclature"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "site": "de_gerlache",
+  "lat_deg": -88.448714,
+  "lon_deg_east": 269.552485,
+  "site_height_m_above_1737.4km_sphere": -1875.1034331890296,
+  "azimuth": "0 = north, 90 = east, step 1.0 deg",
+  "max_range_km": 250.0,
+  "near_map": "80S_40M",
+  "near_range_km": 35.0,
+  "far_map": "80S_40M",
+  "far_range_km": 250.0,
+  "far_range_limited_by_map_edge": false,
+  "skyline_min_deg": 6.519444869921231,
+  "skyline_max_deg": 20.537838822895623,
+  "skyline_mean_deg": 11.222101765090011,
+  "terrain_map": "80S_40M",
+  "source": "NASA LRO LOLA LDEM_80S_40M (PDS Geosciences Node GDR)"
+}

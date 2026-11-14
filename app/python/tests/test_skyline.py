@@ -13,8 +13,9 @@ import unittest
 
 import numpy as np
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(ROOT, "scripts"))
+PYDIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # app/python
+ROOT = os.path.dirname(os.path.dirname(PYDIR))                       # repo root (shared data/ lives here)
+sys.path.insert(0, os.path.join(PYDIR, "scripts"))
 import make_skyline as M  # noqa: E402
 
 SIZE = 1000          # small fake map: 1000 x 1000 pixels of 20 m = 20 km square

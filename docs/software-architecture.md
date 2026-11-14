@@ -133,10 +133,10 @@ Run Steps 2 to 5 for (site A, time A) and (site B, time B). Return both result s
 
 | # | Component | Language / tool | Status | Notes |
 |---|---|---|---|---|
-| 1 | Site list | Python dict (`scripts/sites.py`) | EXISTS | One site today. Needs 3 to 5 for the MUST list [verify coordinates]. |
+| 1 | Site list | Python dict (`app/python/scripts/sites.py`) | EXISTS | One site today. Needs 3 to 5 for the MUST list [verify coordinates]. |
 | 2 | Ephemeris fetch | Python, standard library only (`urllib`, `csv`, `json`) → JPL Horizons API | EXISTS | Caches CSV + meta. Needs one fetch per site. |
 | 3 | Skyline builder | Python + numpy → NASA LOLA LDEM_85S_20M | EXISTS | Downloads about 150 MB once (git-ignored). The band covers ±50 km of the pole, so sites within about 15 km of the pole reuse the same download. |
-| 4 | Tests | Python `unittest` | EXISTS | 16 checks, run with `python3 -m unittest discover -s tests -t . -v`. |
+| 4 | Tests | Python `unittest` | EXISTS | 16 checks, run with `cd app/python && python3 -m unittest discover -s tests -t . -v`. |
 | 5 | Analysis core | Python (numpy optional) | PROPOSED, not written | Steps 2 to 6 above. Pure functions: data in, numbers out. No web or hardware knowledge in it. |
 | 6 | Window statistics | Python script `compute_windows.py` | PROPOSED, not written | Precomputes per-site yearly stats (sunlit %, longest dark stretch) into JSON so the UI loads instantly. |
 | 7 | Server | Python on the UNO Q Linux side | PROPOSED | See decision A. Serves the web files and answers JSON requests. |
@@ -251,16 +251,51 @@ Naming note: the board is the Arduino UNO Q (Linux side plus an STM32 chip), not
 
 ---
 
+## 5e. Decision (Angel, 2026-11-14): the website covers the whole Moon
+
+The challenge asks for "a curated list of notable landing sites – such as past Apollo missions, future CLPS mission targets ... as well as the ability to input custom lunar coordinates". Apollo sites are near the equator, so a south-pole-only tool is not enough. **The website covers the whole Moon. The physical model stays a one-site south-pole demo.** Tracked in GitHub issue #17 (moved to the Day 1 milestone).
+
+| Piece | Whole Moon today? |
+|---|---|
+| Sun and Earth direction (Horizons) | **Yes.** `coord@301` accepts any latitude and longitude. Browsers cannot call Horizons directly (no CORS header, section 5d), so a Python go-between is needed. |
+| Terrain skyline (our LOLA map) | **No, south pole only.** The map is `LDEM_85S_20M` (85°S to the pole). We only downloaded a ±50 km band and each ray looks out 35 km, so sites must be within about 15 km of the pole. The skyline math is fine; the data coverage is the limit. |
+| The physical model | One site by design. |
+
+### Terrain layers, best available first
+1. **Polar map (have it):** `LDEM_85S_20M`, 20 m per pixel. Store the whole file (about 460 MB) on the backend to cover about 115 km from the pole.
+2. **Global LOLA map:** `LDEM_128` (about 237 m per pixel, about 2 GB **[verify]** sizes and file names). A real, coarser skyline anywhere. Finer tiles (`LDEM_512`, about 59 m per pixel) later if time allows.
+3. **Flat horizon, clearly labelled on screen,** only when no terrain data is available.
+
+Source for the product list: PDS LOLA gridded data records (https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/LRO/LOLA/GDR/GDRDEM.htm).
+
+### What this adds to the work
+- **A second map reader.** The global map is a flat latitude/longitude grid, not the polar projection `make_skyline.py` reads. The skyline math is unchanged.
+- **Different physics away from the pole.** At the pole the Sun barely changes elevation (±1.75°). Elsewhere it climbs high and sets every lunar day, and far-side sites never see Earth. Yearly percentages and "time to sunset" mean different things there, and the page must show them honestly.
+- **Non-polar curated sites** (for example Apollo 11) **[verify coordinates]**.
+- **Storage on the UNO Q:** about 17 GB free on the user partition, about 3.3 GB on the root partition. Terrain files go on the user partition; mount path **[verify]**.
+- **Hosting:** public Cloudflare mode is static files, so custom coordinates there need a hosted backend. **Open decision:** custom points in public mode, or hardware mode only?
+
+### Precomputed averages (bonus, not a replacement)
+NASA publishes LOLA-derived average illumination and Earth-visibility maps for the poles (https://pgda.gsfc.nasa.gov/products/69; PDS GDRVIS). They are averages over about 18.6 years, not date-specific, so they cannot answer "this date" or "time to sunset". Use them as a bonus statistic for polar points and as a cross-check for issue #1.
+
+### Order of work
+1. Finish the south pole site end to end.
+2. Add the global terrain layer and the second reader.
+3. Add non-polar sites and typed coordinates.
+
+---
+
 ## 6. Repo layout (PROPOSED, nothing created yet)
 
 ```
-scripts/        offline data jobs (EXISTS: fetch_horizons, make_skyline, sites)
-analysis/       the pure calculation core            (new)
-server/         web server + API routes              (new)
-app/            HTML, JavaScript, CSS                (new)
-firmware/       Arduino sketch                       (new)
-data/           cached CSV, JSON, meta               (EXISTS)
-tests/          unittest checks                      (EXISTS, grows with analysis/)
+app/                         ALL CODE LIVES HERE (decided 2026-11-14); everything outside is team context
+  index.html, src/, public/  the web app (Vite)
+  python/analysis/           the pure calculation core            (EXISTS: visibility.py)
+  python/scripts/            offline data jobs (fetch_horizons, make_skyline, sites, export_site_json)
+  python/tests/              unittest checks
+  python/server/             web server + API routes              (not created yet)
+  sketch/                    Arduino sketch                       (not created yet)
+data/                        shared cached CSV, JSON, meta (team data; code reads it from here)
 ```
 
 ### 6b. Frontend code architecture (PROPOSED 2026-11-13, nothing created)

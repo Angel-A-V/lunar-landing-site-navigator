@@ -23,7 +23,8 @@ from sites import SITE_HEIGHT_M, SITES
 
 API = "https://ssd.jpl.nasa.gov/api/horizons.api"
 BODIES = {"sun": "10", "earth": "399"}
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Repo root (four levels up from this file): the shared data/ folder lives there.
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
 def build_params(body_id, lat, lon_east, height_m, start, stop, step):

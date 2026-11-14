@@ -1,0 +1,18 @@
+{
+  "site": "cabeus",
+  "lat_deg": -85.277073,
+  "lon_deg_east": 318.1945,
+  "site_height_m_above_1737.4km_sphere": -3258.895996123496,
+  "azimuth": "0 = north, 90 = east, step 1.0 deg",
+  "max_range_km": 159.703881224395,
+  "near_map": "80S_40M",
+  "near_range_km": 35.0,
+  "far_map": "80S_40M",
+  "far_range_km": 159.703881224395,
+  "far_range_limited_by_map_edge": true,
+  "skyline_min_deg": 0.7840711730488465,
+  "skyline_max_deg": 22.276559321103733,
+  "skyline_mean_deg": 9.616816817250653,
+  "terrain_map": "80S_40M",
+  "source": "NASA LRO LOLA LDEM_80S_40M (PDS Geosciences Node GDR)"
+}

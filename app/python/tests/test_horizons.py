@@ -8,8 +8,9 @@ import os
 import sys
 import unittest
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(ROOT, "scripts"))
+PYDIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # app/python
+ROOT = os.path.dirname(os.path.dirname(PYDIR))                       # repo root (shared data/ lives here)
+sys.path.insert(0, os.path.join(PYDIR, "scripts"))
 import fetch_horizons as H  # noqa: E402
 
 # A real reply snippet from Horizons (Sun seen from Shackleton rim, 2026-11-10).
@@ -46,7 +47,8 @@ class CachedData(unittest.TestCase):
     """Physics sanity checks on the saved data (skipped if not fetched yet)."""
 
     def rows(self):
-        files = glob.glob(os.path.join(ROOT, "data", "horizons_*_365d_*.csv"))
+        # The limits below are for the model site, 6.6 km from the pole.
+        files = glob.glob(os.path.join(ROOT, "data", "horizons_shackleton_rim_*_365d_*.csv"))
         if not files:
             self.skipTest("no cached 365-day Horizons file")
         with open(files[0]) as f:

@@ -1,0 +1,18 @@
+{
+  "site": "nobile",
+  "lat_deg": -85.239498,
+  "lon_deg_east": 53.647625,
+  "site_height_m_above_1737.4km_sphere": 758.6334231089742,
+  "azimuth": "0 = north, 90 = east, step 1.0 deg",
+  "max_range_km": 158.56252816263574,
+  "near_map": "80S_40M",
+  "near_range_km": 35.0,
+  "far_map": "80S_40M",
+  "far_range_km": 158.56252816263574,
+  "far_range_limited_by_map_edge": true,
+  "skyline_min_deg": -1.8733556676895862,
+  "skyline_max_deg": 9.045812923807908,
+  "skyline_mean_deg": 3.4575792153482117,
+  "terrain_map": "80S_40M",
+  "source": "NASA LRO LOLA LDEM_80S_40M (PDS Geosciences Node GDR)"
+}

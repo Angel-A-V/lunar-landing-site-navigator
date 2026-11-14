@@ -25,7 +25,8 @@ python3 -m pip install --user -r requirements.txt
 ## Run the self-test
 
 ```
-python3 -m unittest tests.test_skyline -v
+cd app/python
+python3 -m unittest discover -s tests -t . -v
 ```
 
 All tests should pass. Three of them skip if the terrain file is not downloaded yet.
@@ -33,18 +34,27 @@ All tests should pass. Three of them skip if the terrain file is not downloaded 
 ## Make the skyline for the model
 
 ```
-python3 scripts/make_skyline.py
+python3 app/python/scripts/make_skyline.py
 ```
 
 Downloads about 150 MB of NASA LOLA terrain into `data/raw/` (not committed) and
 writes `data/skyline_shackleton_rim.csv` and a `.meta.json` next to it.
 The CSV is what the CAD script for the printed wall reads.
 
+## Build the data files the website reads
+
+```
+cd app/python
+python3 scripts/export_site_json.py
+```
+
+Writes `app/public/data/sites.json` and one `<site>_analysis.json` per site. Run it again after changing the data or the analysis code. Then `cd app && npm install && npm run dev`.
+
 ## Get the Sun and Earth directions (NASA JPL Horizons)
 
 ```
-python3 scripts/fetch_horizons.py                          # 30 days, hourly
-python3 scripts/fetch_horizons.py --days 365 --step "6 h"  # a full year
+python3 app/python/scripts/fetch_horizons.py                          # 30 days, hourly
+python3 app/python/scripts/fetch_horizons.py --days 365 --step "6 h"  # a full year
 ```
 
 Needs internet once; results are cached in `data/horizons_*.csv` (with a `.meta.json`
@@ -55,15 +65,14 @@ Columns: `time_utc, sun_az_deg, sun_el_deg, earth_az_deg, earth_el_deg`.
 
 | Folder | What |
 | --- | --- |
-| `scripts/` | Data scripts: `make_skyline.py` (terrain), `fetch_horizons.py` (Sun/Earth), `sites.py` (site list) |
-| `tests/` | Self-tests |
+| `app/` | **All code lives here.** Web app (Vite: `src/`, `public/`) and Python (`app/python/`: `analysis/` calculation core, `scripts/` data jobs, `tests/`) |
 | `data/` | Small committed outputs (CSV). Big raw downloads go in `data/raw/` and are ignored |
 | `docs/` | Plan, hardware inventory, software architecture, handoffs, explainer (index: `docs/README.md`) |
 | `cad/` | Gustavo's terrain wall files (STL, SolidWorks curves) |
 | `for_gustavo/` | One-page wall note and the skyline CSV for Gustavo |
 | `NasaSpaceApps-Challenges/` | Challenge text (11 primary, 3 backup) |
 
-Planned, not created yet (real development is on the hackathon day): `analysis/` (calculation core), `server/`, `app/` (web app), `firmware/` (Arduino sketch).
+Everything outside `app/` is team context (docs, CAD, handoffs, shared data). Planned inside `app/`, not created yet: a Python server and the `sketch/` firmware.
 
 ## Data sources
 
